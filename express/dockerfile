@@ -8,7 +8,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm install
+# RUN npm install
+COPY node_modules/ node_modules/
 
 # Copy the rest of the app files to the container
 COPY . .
@@ -17,4 +18,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the app
-CMD [ "node", "./express/index" ]
+CMD [ "node", "index" ]
