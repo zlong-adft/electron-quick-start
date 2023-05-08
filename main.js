@@ -3,9 +3,10 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const { Worker, workerData, parentPort } = require('worker_threads');
 const worker = new Worker(require.resolve("./worker.js"), { workerData: app.getPath('userData') });
 const path = require('path')
+var mainWindow
 
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -14,7 +15,7 @@ function createWindow() {
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  mainWindow.loadFile('main.html')
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
@@ -37,10 +38,20 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
+worker.on('message', (msg) => {
+  if (msg[0] == 'getOthers') {
+    mainWindow.webContents.send('getOthers_return', msg[1]);
+  }
+})
+
 ipcMain.on('newDoc', (event, value) => {
   worker.postMessage(['newDoc', value])
 })
 
 ipcMain.on('editDoc', (event, value) => {
   worker.postMessage(['editDoc', value])
+})
+
+ipcMain.on('getOthers', (event, value) => {
+  worker.postMessage(['getOthers'])
 })

@@ -28,4 +28,14 @@
     var newValue = document.getElementById('editName').value
     window.api.send('editDoc', newValue)
   }
+
+  window.api.send('getOthers')
+  window.api.receive('getOthers_return', args => {
+    if (args) {
+      console.log('got');
+    }
+    else {
+      console.log('none');
+    }
+  })
 </script>

@@ -3,6 +3,9 @@ const PouchDB = require('pouchdb');
 const db = new PouchDB(workerData + '/myDB');
 // const remoteDB = new PouchDB('http://admin:password@localhost:5984/ongtest');
 const remoteDB = new PouchDB('http://admin:admin123@localhost:5982/ongtest');
+var pouchdbDebug = require('pouchdb-debug');
+PouchDB.plugin(pouchdbDebug);
+PouchDB.debug.enable('*');
 
 PouchDB.sync(db, remoteDB, {
     live: true,
@@ -28,7 +31,7 @@ parentPort.on('message', (msg) => {
             .then((d) => { console.log(d); })
             .catch((err) => { console.log(err); })
     }
-    else if (msg[0] = 'editDoc') {
+    else if (msg[0] == 'editDoc') {
         db.get('person')
             .then(docs => {
                 db.bulkDocs([
@@ -45,5 +48,14 @@ parentPort.on('message', (msg) => {
                         console.log(err);
                     })
             })
+    }
+    else if(msg[0]=='getOthers'){
+        db.get('others')
+        .then(()=>{
+            parentPort.postMessage(['getOthers',true])
+        })
+        .catch((err)=>{
+            parentPort.postMessage(['getOthers',false])
+        })
     }
 })
