@@ -1,0 +1,72 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    image: testapp
+    restart: always
+    container_name: web
+    ports: 
+      - '3000:3000'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "100"
+    networks:
+      - frontend
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 500M
+        reservations:
+          memory: 200M
+    environment:
+      - NODE_ENV=production
+
+  couchdb:
+     image: couchdb:3.3.2
+     restart: always
+     container_name: couchdb
+     logging:
+       driver: "json-file"
+       options:
+         max-size: 10m
+         max-file: "100"
+     volumes:
+       - "./couchdb/data:/opt/couchdb/data"
+       - "./couchdb/config:/opt/couchdb/etc/local.d"
+     ports: 
+       - '5982:5984'
+     networks:
+       - backend
+     deploy:
+       resources:
+         limits:
+           cpus: '2'
+           memory: 1G
+         reservations:
+           memory: 500M
+     environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin123
+
+
+networks:
+  frontend:
+    name: frontend
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.19.0.0/16
+         gateway: 172.19.0.1
+
+  backend:
+    name: backend
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.20.0.0/16
+         gateway: 172.20.0.1

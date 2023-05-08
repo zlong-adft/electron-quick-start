@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
-  </body>
+<head>
+  <title>Pouchdb</title>
+</head>
+
+<body>
+  <h1>New Person</h1>
+  <label>Name:</label>
+  <input type="text" id="name" name="name">
+  <button type="button" onclick="newDoc()">Submit</button>
+
+  <h1>Edit Person</h1>
+  <label>Name:</label>
+  <input type="text" id="editName" name="name">
+  <button type="button" onclick="editDoc()">Submit</button>
+</body>
+
 </html>
+<script>
+  function newDoc() {
+    var newValue = document.getElementById('name').value
+    window.api.send('newDoc', newValue)
+  }
+
+  function editDoc() {
+    var newValue = document.getElementById('editName').value
+    window.api.send('editDoc', newValue)
+  }
+</script>
